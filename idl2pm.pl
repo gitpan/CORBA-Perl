@@ -81,7 +81,7 @@ __END__
 
 idl2pm - IDL compiler to language Perl mapping
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
 idl2pm [options] I<spec>.idl
 

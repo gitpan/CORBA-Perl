@@ -7,3 +7,4 @@ literal.pm
 cdr.pm
 CORBA.pm
 idl2pm.pl
+META.yml                                 Module meta-data (added by MakeMaker)

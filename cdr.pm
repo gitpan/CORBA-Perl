@@ -7,7 +7,7 @@ use strict;
 package CORBA::Perl::cdr;
 
 use vars qw($VERSION);
-$VERSION = '0.21';
+$VERSION = '0.22';
 
 package CORBA::Perl::cdrVisitor;
 
@@ -21,7 +21,7 @@ sub new {
 	my $class = ref($proto) || $proto;
 	my $self = {};
 	bless($self, $class);
-	my($parser) = @_;
+	my ($parser) = @_;
 	$self->{srcname} = $parser->YYData->{srcname};
 	$self->{srcname_size} = $parser->YYData->{srcname_size};
 	$self->{srcname_mtime} = $parser->YYData->{srcname_mtime};
@@ -83,7 +83,7 @@ sub _get_defn {
 
 sub visitSpecification {
 	my $self = shift;
-	my($node) = @_;
+	my ($node) = @_;
 	my $FH = $self->{out};
 	$self->{pkg_modif} = 0;
 	print $FH "#   This file was generated (by ",$0,"). DO NOT modify it.\n";
@@ -165,12 +165,53 @@ sub visitModule {
 #
 
 sub visitBaseInterface {
-	# empty
+	my $self = shift;
+	my($node) = @_;
+	if ($self->{srcname} eq $node->{filename}) {
+		my $FH = $self->{out};
+		$self->{pkg_modif} = 0;
+		print $FH "#\n";
+		print $FH "#   begin of '",ref $node,"' ",$node->{pl_package},"\n";
+		print $FH "#\n";
+		print $FH "\n";
+		print $FH "package ",$node->{pl_package},";\n";
+		print $FH "\n";
+		print $FH "use CORBA::Perl::CORBA;\n";
+		print $FH "use Carp;\n";
+		print $FH "\n";
+		foreach (@{$node->{list_decl}}) {
+			my $defn = $self->_get_defn($_);
+			if (	   $defn->isa('Operation')
+					or $defn->isa('Attributes') 
+					or $defn->isa('Initializer') 
+					or $defn->isa('StateMembers') ) {
+				next;
+			}
+			$defn->visit($self);
+			if ($self->{pkg_modif}) {
+				$self->{pkg_modif} = 0;
+				print $FH "package ",$node->{pl_package},";\n";
+				print $FH "\n";
+			}
+		}
+		print $FH "\n";
+		print $FH "#\n";
+		print $FH "#   end of '",ref $node,"' ",$node->{pl_package},"\n";
+		print $FH "#\n";
+		print $FH "\n";
+		$self->{pkg_modif} = 1;
+	} else {
+		$self->_insert_use($node->{filename});
+	}
 }
 
 sub visitForwardBaseInterface {
 	# empty
 }
+
+#
+#	3.9		Value Declaration
+#
 
 #
 #	3.10	Constant Declaration

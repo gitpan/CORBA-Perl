@@ -1,5 +1,8 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.22  Mon Nov 15 12:30:00 2004
+	- implementation of visitBaseInterface
+
 0.21  Mon Jun  7 08:30:00 2004
 	- better support for 'import'
 
