@@ -7,7 +7,7 @@ use strict;
 package CORBA::Perl::cdr;
 
 use vars qw($VERSION);
-$VERSION = '0.20';
+$VERSION = '0.21';
 
 package CORBA::Perl::cdrVisitor;
 
@@ -84,9 +84,6 @@ sub _get_defn {
 sub visitSpecification {
 	my $self = shift;
 	my($node) = @_;
-	my $filename = $self->{srcname};
-	$filename =~ s/^([^\/]+\/)+//;
-	$filename =~ s/\.idl$//i;
 	my $FH = $self->{out};
 	$self->{pkg_modif} = 0;
 	print $FH "#   This file was generated (by ",$0,"). DO NOT modify it.\n";
@@ -1021,6 +1018,14 @@ sub visitTypeId {
 }
 
 sub visitTypePrefix {
+	# empty
+}
+
+#
+#	XPIDL
+#
+
+sub visitCodeFragment {
 	# empty
 }
 
