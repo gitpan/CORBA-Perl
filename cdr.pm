@@ -7,7 +7,7 @@ use strict;
 package CORBA::Perl::cdr;
 
 use vars qw($VERSION);
-$VERSION = '0.11';
+$VERSION = '0.20';
 
 package CORBA::Perl::cdrVisitor;
 
@@ -91,7 +91,6 @@ sub visitSpecification {
 	$self->{pkg_modif} = 0;
 	print $FH "#   This file was generated (by ",$0,"). DO NOT modify it.\n";
 	print $FH "# From file : ",$self->{srcname},", ",$self->{srcname_size}," octets, ",POSIX::ctime($self->{srcname_mtime});
-	print $FH "# Generation date : ",POSIX::ctime(time());
 	print $FH "\n";
 	print $FH "use strict;\n";
 	print $FH "\n";
@@ -208,7 +207,6 @@ sub visitTypeDeclarators {
 sub visitTypeDeclarator {
 	my $self = shift;
 	my ($node) = @_;
-	return if (exists $node->{modifier});	# native IDL2.2
 	my $type = $self->_get_defn($node->{type});
 	if (	   $type->isa('StructType')
 			or $type->isa('UnionType')
@@ -354,6 +352,10 @@ sub visitTypeDeclarator {
 			print $FH "\n";
 		}
 	}
+}
+
+sub visitNativeType {
+	# empty
 }
 
 #

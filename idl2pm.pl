@@ -38,6 +38,7 @@ if ($parser->YYData->{opt_h}) {
 	use Pod::Usage;
 	pod2usage(-verbose => 1);
 }
+$parser->YYData->{collision_allowed} = 1;
 $parser->Run(@ARGV);
 $parser->YYData->{symbtab}->CheckForward();
 $parser->YYData->{symbtab}->CheckRepositoryID();

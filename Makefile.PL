@@ -6,7 +6,7 @@ WriteMakefile(
     'VERSION_FROM'  => 'cdr.pm',
     'ABSTRACT'      => 'IDL compiler to Perl mapping',
     'PREREQ_PM'     => {
-                        'CORBA::IDL::node'  => 2.21,
+                        'CORBA::IDL::node'  => 2.40,
     },
     'PM'            => {
                         'name.pm'       => '$(INST_LIBDIR)/Perl/name.pm',

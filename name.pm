@@ -49,6 +49,7 @@ sub _get_pkg {
 					or $defn->isa('UnionType')
 					or $defn->isa('ExceptionType') ) {
 				$pkg =~ s/::[0-9A-Z_a-z]+$//;
+				last unless ($pkg);
 				$defn = $self->{symbtab}->Lookup($pkg);
 			}
 		}
@@ -151,9 +152,14 @@ sub visitTypeDeclarator {
 	my ($node) = @_;
 	$node->{pl_package} = $self->_get_pkg($node);
 	$node->{pl_name} = $self->_get_name($node);
-	unless (exists $node->{modifier}) {		# native
-		$self->_get_defn($node->{type})->visit($self);
-	}
+	$self->_get_defn($node->{type})->visit($self);
+}
+
+sub visitNativeType {
+	my $self = shift;
+	my ($node) = @_;
+	$node->{pl_package} = $self->_get_pkg($node);
+	$node->{pl_name} = $self->_get_name($node);
 }
 
 #
