@@ -1,0 +1,9 @@
+Revision history for Perl extension CORBA::Perl.
+
+0.10  Tue Mar 16 12:30:00 2004
+	- first release : extraction from CORBA::XS
+
+0.01  Fri May  3 16:02:11 2002
+	- original version; created by h2xs 1.20 with options
+		-XA -n CORBA::XS
+
