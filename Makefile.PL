@@ -12,9 +12,10 @@ WriteMakefile(
                         'name.pm'       => '$(INST_LIBDIR)/Perl/name.pm',
                         'literal.pm'    => '$(INST_LIBDIR)/Perl/literal.pm',
                         'cdr.pm'        => '$(INST_LIBDIR)/Perl/cdr.pm',
+                        'client.pm'     => '$(INST_LIBDIR)/Perl/client.pm',
                         'CORBA.pm'      => '$(INST_LIBDIR)/Perl/CORBA.pm',
     },
-    'EXE_FILES'     => ['idl2pm.pl'],
+    'EXE_FILES'     => [ 'idl2pm.pl', 'idl2pmcli.pl' ],
     'AUTHOR'        => "Francois PERRAD (francois.perrad\@gadz.org)",
     'dist'          => {
                         'COMPRESS'      => 'gzip',

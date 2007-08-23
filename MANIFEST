@@ -5,6 +5,8 @@ test.pl
 name.pm
 literal.pm
 cdr.pm
+client.pm
 CORBA.pm
 idl2pm.pl
+idl2pmcli.pl
 META.yml                                 Module meta-data (added by MakeMaker)

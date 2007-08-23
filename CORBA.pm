@@ -337,7 +337,7 @@ sub boolean__demarshal {
 }
 
 sub boolean__stringify {
-	my ($r_buffer, $value) = @_;
+	my ($value) = @_;
 	if ($value) {
 		return "true";
 	} else {

@@ -1,5 +1,8 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.23  Wed Aug 22 12:30:00 2007
+	- add idl2pmcli.pl & client.pm (rpc)
+
 0.22  Mon Nov 15 12:30:00 2004
 	- implementation of visitBaseInterface
 

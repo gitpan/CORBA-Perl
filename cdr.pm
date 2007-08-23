@@ -7,7 +7,7 @@ use strict;
 package CORBA::Perl::cdr;
 
 use vars qw($VERSION);
-$VERSION = '0.22';
+$VERSION = '0.23';
 
 package CORBA::Perl::cdrVisitor;
 
@@ -182,8 +182,8 @@ sub visitBaseInterface {
 		foreach (@{$node->{list_decl}}) {
 			my $defn = $self->_get_defn($_);
 			if (	   $defn->isa('Operation')
-					or $defn->isa('Attributes') 
-					or $defn->isa('Initializer') 
+					or $defn->isa('Attributes')
+					or $defn->isa('Initializer')
 					or $defn->isa('StateMembers') ) {
 				next;
 			}
