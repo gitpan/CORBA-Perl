@@ -1,5 +1,8 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.24  Wed Sep 26 12:30:00 2007
+	- reorg: more compliant with CPAN requirements
+
 0.23  Wed Aug 22 12:30:00 2007
 	- add idl2pmcli.pl & client.pm (rpc)
 

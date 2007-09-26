@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 use strict;
-use FindBin;
-use lib "$FindBin::Bin/../lib";
 
+use CORBA::IDL;
 use CORBA::IDL::parser30;
 use CORBA::IDL::symbtab;
+use CORBA::Perl;
 # visitors
 use CORBA::IDL::repos_id;
 use CORBA::Perl::name;
@@ -25,10 +25,11 @@ if ($Parser::IDL_version lt '3.0') {
 if ($^O eq 'MSWin32') {
 	$parser->YYData->{preprocessor} = 'cpp -C ' . $cflags;
 #	$parser->YYData->{preprocessor} = 'CL /E /C /nologo ' . $cflags;	# Microsoft VC
-} else {
+}
+else {
 	$parser->YYData->{preprocessor} = 'cpp -C ' . $cflags;
 }
-$parser->getopts("i:J:x");
+$parser->getopts('i:J:x');
 $parser->Run(@ARGV);
 $parser->YYData->{symbtab}->CheckForward();
 $parser->YYData->{symbtab}->CheckRepositoryID();
@@ -139,9 +140,16 @@ CORBA::MICO or CORBA::ORBit.
 
 cpp, idl2html, idl2pm
 
+=head1 COPYRIGHT
+
+(c) 2004-2007 Francois PERRAD, France. All rights reserved.
+
+This program and all CORBA::Perl modules are distributed
+under the terms of the Artistic Licence.
+
 =head1 AUTHOR
 
-Francois PERRAD E<lt>fperrad@parkeon.comE<gt>
+Francois PERRAD, francois.perrad@gadz.org
 
 =cut
 

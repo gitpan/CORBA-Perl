@@ -4,11 +4,6 @@ use strict;
 #			Interface Definition Language (OMG IDL CORBA v3.0)
 #
 
-package CORBA::Perl::cdr;
-
-use vars qw($VERSION);
-$VERSION = '0.23';
-
 package CORBA::Perl::cdrVisitor;
 
 use File::Basename;

@@ -2,11 +2,13 @@ Changes
 Makefile.PL
 MANIFEST
 test.pl
-name.pm
-literal.pm
-cdr.pm
-client.pm
-CORBA.pm
-idl2pm.pl
-idl2pmcli.pl
+lib/CORBA/Perl.pm
+lib/CORBA/Perl/name.pm
+lib/CORBA/Perl/literal.pm
+lib/CORBA/Perl/cdr.pm
+lib/CORBA/Perl/client.pm
+lib/CORBA/Perl/CORBA.pm
+bin/idl2pm
+bin/idl2pmcli
+
 META.yml                                 Module meta-data (added by MakeMaker)

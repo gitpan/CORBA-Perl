@@ -1,8 +1,11 @@
 #!/usr/bin/perl -w
 
 use strict;
+
+use CORBA::IDL;
 use CORBA::IDL::parser30;
 use CORBA::IDL::symbtab;
+use CORBA::Perl;
 # visitors
 use CORBA::IDL::repos_id;
 use CORBA::Perl::name;
@@ -22,13 +25,14 @@ if ($Parser::IDL_version lt '3.0') {
 if ($^O eq 'MSWin32') {
 	$parser->YYData->{preprocessor} = 'cpp -C ' . $cflags;
 #	$parser->YYData->{preprocessor} = 'CL /E /C /nologo ' . $cflags;	# Microsoft VC
-} else {
+}
+else {
 	$parser->YYData->{preprocessor} = 'cpp -C ' . $cflags;
 }
-$parser->getopts("hi:J:vx");
+$parser->getopts('hi:J:vx');
 if ($parser->YYData->{opt_v}) {
-	print "CORBA::Perl $CORBA::Perl::cdr::VERSION\n";
-	print "CORBA::IDL $CORBA::IDL::node::VERSION\n";
+	print "CORBA::Perl $CORBA::Perl::VERSION\n";
+	print "CORBA::IDL $CORBA::IDL::VERSION\n";
 	print "IDL $Parser::IDL_version\n";
 	print "$0\n";
 	print "Perl $] on $^O\n";
@@ -159,7 +163,7 @@ cpp, idl2html, idl2xs_c
 
 =head1 COPYRIGHT
 
-(c) 2002-2004 Francois PERRAD, France. All rights reserved.
+(c) 2002-2007 Francois PERRAD, France. All rights reserved.
 
 This program and all CORBA::Perl modules are distributed
 under the terms of the Artistic Licence.

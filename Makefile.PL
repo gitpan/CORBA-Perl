@@ -3,19 +3,13 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'          => 'CORBA::Perl',
-    'VERSION_FROM'  => 'cdr.pm',
+    'VERSION_FROM'  => 'lib/CORBA/Perl.pm',
     'ABSTRACT'      => 'IDL compiler to Perl mapping',
     'PREREQ_PM'     => {
-                        'CORBA::IDL::node'  => 2.40,
+                        'CORBA::IDL'    => 2.47,
     },
-    'PM'            => {
-                        'name.pm'       => '$(INST_LIBDIR)/Perl/name.pm',
-                        'literal.pm'    => '$(INST_LIBDIR)/Perl/literal.pm',
-                        'cdr.pm'        => '$(INST_LIBDIR)/Perl/cdr.pm',
-                        'client.pm'     => '$(INST_LIBDIR)/Perl/client.pm',
-                        'CORBA.pm'      => '$(INST_LIBDIR)/Perl/CORBA.pm',
-    },
-    'EXE_FILES'     => [ 'idl2pm.pl', 'idl2pmcli.pl' ],
+    'INSTALLDIRS'   => 'site',
+    'EXE_FILES'     => [ 'bin/idl2pm', 'bin/idl2pmcli' ],
     'AUTHOR'        => "Francois PERRAD (francois.perrad\@gadz.org)",
     'dist'          => {
                         'COMPRESS'      => 'gzip',

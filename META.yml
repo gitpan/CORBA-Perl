@@ -1,11 +1,11 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         CORBA-Perl
-version:      0.23
-version_from: cdr.pm
+version:      0.24
+version_from: lib/CORBA/Perl.pm
 installdirs:  site
 requires:
-    CORBA::IDL::node:              2.4
+    CORBA::IDL:                    2.47
 
 distribution_type: module
 generated_by: ExtUtils::MakeMaker version 6.30
