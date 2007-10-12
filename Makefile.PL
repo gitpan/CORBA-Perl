@@ -6,7 +6,7 @@ WriteMakefile(
     'VERSION_FROM'  => 'lib/CORBA/Perl.pm',
     'ABSTRACT'      => 'IDL compiler to Perl mapping',
     'PREREQ_PM'     => {
-                        'CORBA::IDL'    => 2.47,
+                        'CORBA::IDL'    => 2.60,
     },
     'INSTALLDIRS'   => 'site',
     'EXE_FILES'     => [ 'bin/idl2pm', 'bin/idl2pmcli' ],

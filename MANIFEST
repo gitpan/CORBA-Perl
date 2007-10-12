@@ -1,12 +1,13 @@
 Changes
 Makefile.PL
 MANIFEST
+README
 test.pl
 lib/CORBA/Perl.pm
-lib/CORBA/Perl/name.pm
-lib/CORBA/Perl/literal.pm
-lib/CORBA/Perl/cdr.pm
-lib/CORBA/Perl/client.pm
+lib/CORBA/Perl/CdrVisitor.pm
+lib/CORBA/Perl/ClientVisitor.pm
+lib/CORBA/Perl/LiteralVisitor.pm
+lib/CORBA/Perl/NameVisitor.pm
 lib/CORBA/Perl/CORBA.pm
 bin/idl2pm
 bin/idl2pmcli

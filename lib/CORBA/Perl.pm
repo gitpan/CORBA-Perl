@@ -1,9 +1,9 @@
 use strict;
+use warnings;
 
 package CORBA::Perl;
 
-use vars qw($VERSION);
-$VERSION = '0.24';
+our $VERSION = '0.40';
 
 1;
 

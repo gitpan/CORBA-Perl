@@ -1,5 +1,9 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.40  Fri Oct 12 08:30:00 2007
+	- compatible with CORBA::IDL 2.60
+	- some Perl Best Practices
+
 0.24  Wed Sep 26 12:30:00 2007
 	- reorg: more compliant with CPAN requirements
 
