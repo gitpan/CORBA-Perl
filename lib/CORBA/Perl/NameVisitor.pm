@@ -17,8 +17,16 @@ sub new {
     my $class = ref($proto) || $proto;
     my $self = {};
     bless $self, $class;
-    my ($parser) = @_;
+    my ($parser, $pkg_prefix) = @_;
     $self->{symbtab} = $parser->YYData->{symbtab};
+    if ($pkg_prefix) {
+        $self->{pkg_prefix} = $pkg_prefix;
+        $self->{pkg_prefix} =~ s/\//::/g;
+        $self->{pkg_prefix} .= '::';
+    }
+    else {
+        $self->{pkg_prefix} = q{};
+    }
     return $self;
 }
 
@@ -59,6 +67,7 @@ sub _get_pkg {
         }
     }
     $pkg =~ s/^:://;
+    $pkg = $self->{pkg_prefix} . $pkg;
     return ($pkg eq q{}) ? 'main' : $pkg;
 }
 
@@ -192,7 +201,7 @@ sub visitBasicType {
     my ($node) = @_;
     my $name = $node->{value};
     $name =~ s/ /_/g;
-    $node->{pl_package} = 'CORBA';
+    $node->{pl_package} = 'CORBA::Perl::CORBA';
     $node->{pl_name} = $name;
 }
 
@@ -283,7 +292,9 @@ sub visitSequenceType {
     my $type = $self->_get_defn($node->{type});
     $type->visit($self);
     $node->{pl_package} = $self->_get_pkg($node);
-    my $name = ($type->{pl_package} eq 'main') ? $type->{pl_name} : $type->{pl_package} . '::' . $type->{pl_name};
+    my $name = ($type->{pl_package} eq 'main')
+             ? $type->{pl_name}
+             : $type->{pl_package} . '::' . $type->{pl_name};
     $name =~ s/::/_/g;
     $node->{pl_name} = 'sequence_' . $name;
 }
@@ -291,14 +302,14 @@ sub visitSequenceType {
 sub visitStringType {
     my $self = shift;
     my ($node) = @_;
-    $node->{pl_package} = 'CORBA';
+    $node->{pl_package} = 'CORBA::Perl::CORBA';
     $node->{pl_name} = 'string';
 }
 
 sub visitWideStringType {
     my $self = shift;
     my ($node) = @_;
-    $node->{pl_package} = 'CORBA';
+    $node->{pl_package} = 'CORBA::Perl::CORBA';
     $node->{pl_name} = 'wstring';
 }
 
@@ -306,7 +317,7 @@ sub visitFixedPtType {
     my $self = shift;
     my ($node) = @_;
     my $name = 'fixed';
-    $node->{pl_package} = 'CORBA';
+    $node->{pl_package} = 'CORBA::Perl::CORBA';
     $node->{pl_name} = $name;
 }
 
@@ -314,7 +325,7 @@ sub visitFixedPtConstType {
     my $self = shift;
     my ($node) = @_;
     my $name = 'fixed';
-    $node->{pl_package} = 'CORBA';
+    $node->{pl_package} = 'CORBA::Perl::CORBA';
     $node->{pl_name} = $name;
 }
 

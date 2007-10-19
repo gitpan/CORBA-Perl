@@ -3,7 +3,7 @@ use warnings;
 
 package CORBA::Perl;
 
-our $VERSION = '0.40';
+our $VERSION = '0.41';
 
 1;
 

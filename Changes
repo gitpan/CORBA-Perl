@@ -1,5 +1,10 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.41  Fri Oct 19 08:30:00 2007
+	- compatible with CORBA::IDL 2.61
+	- package refactoring (avoid PAUSE indexer errors)
+	- add RPC-GIOP example
+
 0.40  Fri Oct 12 08:30:00 2007
 	- compatible with CORBA::IDL 2.60
 	- some Perl Best Practices

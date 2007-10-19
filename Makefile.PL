@@ -9,7 +9,7 @@ WriteMakefile(
                         'CORBA::IDL'    => 2.60,
     },
     'INSTALLDIRS'   => 'site',
-    'EXE_FILES'     => [ 'bin/idl2pm', 'bin/idl2pmcli' ],
+    'EXE_FILES'     => [ 'bin/idl2pm', 'bin/idl2pmrpc' ],
     'AUTHOR'        => "Francois PERRAD (francois.perrad\@gadz.org)",
     'dist'          => {
                         'COMPRESS'      => 'gzip',

@@ -20,7 +20,7 @@ sub new {
     my $class = ref($proto) || $proto;
     my $self = {};
     bless $self, $class;
-    my ($parser) = @_;
+    my ($parser, $pkg_prefix) = @_;
     $self->{srcname} = $parser->YYData->{srcname};
     $self->{srcname_size} = $parser->YYData->{srcname_size};
     $self->{srcname_mtime} = $parser->YYData->{srcname_mtime};
@@ -28,13 +28,13 @@ sub new {
     $self->{client} = 1;
     $self->{miop} = 0;
     $self->{use} = {};
-    if (exists $parser->YYData->{opt_J}) {
-        $self->{path_use} = $parser->YYData->{opt_J};
-        $self->{path_use} =~ s/\//::/g;
-        $self->{path_use} .= '::';
+    if ($pkg_prefix) {
+        $self->{pkg_prefix} = $pkg_prefix;
+        $self->{pkg_prefix} =~ s/\//::/g;
+        $self->{pkg_prefix} .= '::';
     }
     else {
-        $self->{path_use} = q{};
+        $self->{pkg_prefix} = q{};
     }
     my $filename = basename($self->{srcname}, '.idl') . '.pm';
     $self->open_stream($filename);
@@ -61,7 +61,7 @@ sub _insert_use {
     $module = basename($module, '.idl');
     unless (exists $self->{use}->{$module}) {
         $self->{use}->{$module} = 1;
-        print $FH "use ",$self->{path_use},$module,";\n";
+        print $FH "use ",$self->{pkg_prefix},$module,";\n";
         print $FH "\n";
     }
 }
@@ -90,12 +90,18 @@ sub visitSpecification {
     print $FH "# From file : ",$self->{srcname},", ",$self->{srcname_size}," octets, ",POSIX::ctime($self->{srcname_mtime});
     print $FH "\n";
     print $FH "use strict;\n";
+    print $FH "use warnings;\n";
     print $FH "\n";
     print $FH "package main;\n";
     print $FH "\n";
     print $FH "use CORBA::Perl::CORBA;\n";
     print $FH "use Carp;\n";
     print $FH "\n";
+    if (exists $node->{list_import}) {
+        foreach (@{$node->{list_import}}) {
+            $_->visit($self);
+        }
+    }
     foreach (@{$node->{list_decl}}) {
         $self->_get_defn($_)->visit($self);
         if ($self->{pkg_modif}) {
@@ -108,6 +114,18 @@ sub visitSpecification {
     print $FH "\n";
     print $FH "#   end of file : ",$self->{filename},"\n";
     close $FH;
+}
+
+#
+#   3.6     Import Declaration
+#
+
+sub visitImport {
+    my $self = shift;
+    my ($node) = @_;
+    foreach (@{$node->{list_decl}}) {
+        $self->{symbtab}->Lookup($_)->visit($self);
+    }
 }
 
 #
@@ -820,7 +838,7 @@ sub visitEnumType {
         foreach (@{$node->{list_expr}}) {
             print $FH "\t}\n";
             print $FH "\telsif (\$value eq '",$_->{pl_name},"') {\n";
-            print $FH "\t\tCORBA::unsigned_long__marshal(\$r_buffer, ",$idx++,");\n";
+            print $FH "\t\tCORBA::Perl::CORBA::unsigned_long__marshal(\$r_buffer, ",$idx++,");\n";
         }
         print $FH "\t}\n";
         print $FH "\telse {\n";
@@ -829,7 +847,7 @@ sub visitEnumType {
         print $FH "}\n";
         print $FH "\n";
         print $FH "sub ",$node->{pl_name},"__demarshal {\n";
-        print $FH "\tmy \$value = CORBA::unsigned_long__demarshal(\@_);\n";
+        print $FH "\tmy \$value = CORBA::Perl::CORBA::unsigned_long__demarshal(\@_);\n";
         print $FH "\tif (0) {\n";
         $idx = 0;
         foreach (@{$node->{list_expr}}) {
@@ -894,14 +912,14 @@ sub visitSequenceType {
             print $FH "\tmy \$len = length(\$value);\n";
             print $FH "\tcroak \"too long sequence for '",$node->{pl_name},"' (max:\$max).\\n\"\n";
             print $FH "\t\t\tif (defined \$max and \$len > \$max);\n";
-            print $FH "\tCORBA::unsigned_long__marshal(\$r_buffer, \$len);\n";
+            print $FH "\tCORBA::Perl::CORBA::unsigned_long__marshal(\$r_buffer, \$len);\n";
             print $FH "\t\$\$r_buffer .= \$value;\n";
         }
         else {
             print $FH "\tmy \$len = scalar(\@{\$value});\n";
             print $FH "\tcroak \"too long sequence for '",$node->{pl_name},"' (max:\$max).\\n\"\n";
             print $FH "\t\t\tif (defined \$max and \$len > \$max);\n";
-            print $FH "\tCORBA::unsigned_long__marshal(\$r_buffer, \$len);\n";
+            print $FH "\tCORBA::Perl::CORBA::unsigned_long__marshal(\$r_buffer, \$len);\n";
             print $FH "\tforeach (\@{\$value}) {\n";
             print $FH "\t\t",$type->{pl_package},"::",$type->{pl_name},"__marshal(\$r_buffer, \$_);\n";
             print $FH "\t}\n";
@@ -910,7 +928,7 @@ sub visitSequenceType {
         print $FH "\n";
         print $FH "sub ",$node->{pl_name},"__demarshal {\n";
         print $FH "\tmy (\$r_buffer, \$r_offset, \$endian) = \@_;\n";
-        print $FH "\tmy \$len = CORBA::unsigned_long__demarshal(\$r_buffer, \$r_offset, \$endian);\n";
+        print $FH "\tmy \$len = CORBA::Perl::CORBA::unsigned_long__demarshal(\$r_buffer, \$r_offset, \$endian);\n";
         print $FH "\tmy \@seq = ();\n";
         if        ( $type->{pl_name} eq 'char'
                  or $type->{pl_name} eq 'octet' ) {
@@ -1046,7 +1064,7 @@ sub visitException {
         }
         print $FH "package ",$node->{pl_package},"::",$node->{pl_name},";\n";
         print $FH "\n";
-        print $FH "\@",$node->{pl_package},"::",$node->{pl_name},"::ISA = qw(CORBA::UserException);\n";
+        print $FH "use base qw(CORBA::Perl::CORBA::UserException);\n";
         print $FH "\n";
         print $FH "sub new {\n";
         print $FH "\tmy \$self = shift;\n";

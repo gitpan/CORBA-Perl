@@ -23,7 +23,7 @@ sub new {
     my $class = ref($proto) || $proto;
     my $self = {};
     bless $self, $class;
-    my($parser) = @_;
+    my($parser, $pkg_prefix) = @_;
     $self->{srcname} = $parser->YYData->{srcname};
     $self->{srcname_size} = $parser->YYData->{srcname_size};
     $self->{srcname_mtime} = $parser->YYData->{srcname_mtime};
@@ -31,13 +31,13 @@ sub new {
     $self->{client} = 1;
     $self->{miop} = 0;
     $self->{use} = {};
-    if (exists $parser->YYData->{opt_J}) {
-        $self->{path_use} = $parser->YYData->{opt_J};
-        $self->{path_use} =~ s/\//::/g;
-        $self->{path_use} .= '::';
+    if ($pkg_prefix) {
+        $self->{pkg_prefix} = $pkg_prefix;
+        $self->{pkg_prefix} =~ s/\//::/g;
+        $self->{pkg_prefix} .= '::';
     }
     else {
-        $self->{path_use} = q{};
+        $self->{pkg_prefix} = q{};
     }
     my $filename = basename($self->{srcname}, '.idl') . '.pm';
     $self->open_stream($filename);
@@ -62,12 +62,18 @@ sub visitSpecification {
     print $FH "# From file : ",$self->{srcname},", ",$self->{srcname_size}," octets, ",POSIX::ctime($self->{srcname_mtime});
     print $FH "\n";
     print $FH "use strict;\n";
+    print $FH "use warnings;\n";
     print $FH "\n";
     print $FH "package main;\n";
     print $FH "\n";
-    print $FH "use CORBA::Perl::rpc_corba;\n";
+    print $FH "use CORBA::Perl::rpc_giop;\n";
     print $FH "use Carp;\n";
     print $FH "\n";
+    if (exists $node->{list_import}) {
+        foreach (@{$node->{list_import}}) {
+            $_->visit($self);
+        }
+    }
     foreach (@{$node->{list_decl}}) {
         $self->_get_defn($_)->visit($self);
         if ($self->{pkg_modif}) {
@@ -239,10 +245,10 @@ sub visitOperation {
     print $FH "\n";
     print $FH "\tmy (\$_request_header, \$_buffer",$r_inout,") = \$self->",$node->{pl_name},"__marshal_request(\@_);\n";
     if (exists $node->{modifier}) {     # oneway
-        print $FH "\tGIOP::RequestOneWay(\$self->{sock},\$_request_header,\$_buffer);\t\t# oneway\n";
+        print $FH "\tCORBA::Perl::GIOP::RequestOneWay(\$self->{sock},\$_request_header,\$_buffer);\t\t# oneway\n";
     }
     else {
-        print $FH "\tmy(\$_status, \$_service_context, \$_reply, \$_endian) = GIOP::RequestReply(\$self->{sock},\$_request_header,\$_buffer);\n";
+        print $FH "\tmy(\$_status, \$_service_context, \$_reply, \$_endian) = CORBA::Perl::GIOP::RequestReply(\$self->{sock},\$_request_header,\$_buffer);\n";
         print $FH "\tmy \$_offset = 0;\n";
         print $FH "\treturn \$self->",$node->{pl_name},"__demarshal_reply(\$_status, \$_service_context, \\\$_reply, \\\$_offset, \$_endian",$r_inout,");\n";
     }
@@ -258,14 +264,14 @@ sub visitOperation {
         print $FH "\n";
         print $FH "\tmy \$_request = q{};\n";
         print $FH "\tmy \$_request_header = {\n";
-        print $FH "\t\t\trequest_id      => GIOP::GetRequestId(),\n";
+        print $FH "\t\t\trequest_id      => CORBA::Perl::GIOP::GetRequestId(),\n";
         print $FH "\t\t\tresponse_flags  => 0,   # NONE\n";
         print $FH "\t\t\treserved        => [0, 0, 0],\n";
-        print $FH "\t\t\ttarget          => [GIOP::KeyAddr(), \"",$self->{repos_id},"\"],\n";
+        print $FH "\t\t\ttarget          => [CORBA::Perl::GIOP::KeyAddr(), \"",$self->{repos_id},"\"],\n";
         print $FH "\t\t\toperation       => \"",$node->{idf},"\",\n";
         print $FH "\t\t\tservice_context => []   # empty sequence\n";
         print $FH "\t};\n";
-        print $FH "\tGIOP::RequestHeader_1_2__marshal(\\\$_request, \$_request_header);\n";
+        print $FH "\tCORBA::Perl::GIOP::RequestHeader_1_2__marshal(\\\$_request, \$_request_header);\n";
         print $FH "\t# body\n";
         foreach (@{$node->{list_param}}) {      # paramater
             my $type = $self->_get_defn($_->{type});
@@ -284,7 +290,7 @@ sub visitOperation {
         print $FH "\t\t\tmessage_type    => 0,       # Request\n";
         print $FH "\t\t\tmessage_size    => length(\$_request)\n";
         print $FH "\t};\n";
-        print $FH "\tGIOP::MessageHeader_1_2__marshal(\\\$_message, \$_message_header);\n";
+        print $FH "\tCORBA::Perl::GIOP::MessageHeader_1_2__marshal(\\\$_message, \$_message_header);\n";
         print $FH "\t\$_message .= \$_request;\n";
         print $FH "\n";
         print $FH "\treturn \$_message;\n";
@@ -321,7 +327,7 @@ sub visitOperation {
     }
     print $FH "\n";
     print $FH "\tmy \$_request_header = {\n";
-    print $FH "\t\t\trequest_id      => 0,   # overloaded by GIOP::Request* \n";
+    print $FH "\t\t\trequest_id      => 0,   # overloaded by CORBA::Perl::GIOP::Request* \n";
     if (exists $node->{modifier}) {     # oneway
         print $FH "\t\t\tresponse_flags  => 0,   # NONE\n";
     }
@@ -329,7 +335,7 @@ sub visitOperation {
         print $FH "\t\t\tresponse_flags  => 3,   # WITH_TARGET\n";
     }
     print $FH "\t\t\treserved        => [0, 0, 0],\n";
-    print $FH "\t\t\ttarget          => [GIOP::KeyAddr(), \"",$self->{repos_id},"\"],\n";
+    print $FH "\t\t\ttarget          => [CORBA::Perl::GIOP::KeyAddr(), \"",$self->{repos_id},"\"],\n";
     print $FH "\t\t\toperation       => \"",$node->{idf},"\",\n";
     print $FH "\t\t\tservice_context => []   # empty sequence\n";
     print $FH "\t};\n";
@@ -353,7 +359,7 @@ sub visitOperation {
         print $FH "\tmy \$self = shift;\n";
         print $FH "\n";
         print $FH "\tmy(\$_status, \$_service_context, \$_reply, \$_offset, \$_endian",$r_inout,") = \@_;\n";
-        print $FH "\tif      (\$_status eq CORBA::NO_EXCEPTION) {\n";
+        print $FH "\tif      (\$_status eq CORBA::Perl::CORBA::NO_EXCEPTION) {\n";
         my $nb = 0;
         my $type = $self->_get_defn($node->{type});
         unless ($type->isa('VoidType')) {
@@ -396,8 +402,8 @@ sub visitOperation {
         print $FH ")" if ($nb > 1);
         print $FH ";\n";
         print $FH "\t}\n";
-        print $FH "\telsif (\$_status eq CORBA::USER_EXCEPTION) {\n";
-        print $FH "\t\tmy \$_exception_id = CORBA::string__demarshal(\$_reply,\$_offset,\$_endian);\n";
+        print $FH "\telsif (\$_status eq CORBA::Perl::CORBA::USER_EXCEPTION) {\n";
+        print $FH "\t\tmy \$_exception_id = CORBA::Perl::CORBA::string__demarshal(\$_reply,\$_offset,\$_endian);\n";
         print $FH "\t\tif (0) {\n";
         foreach (@{$node->{list_raise}}) {
             my $defn = $self->_get_defn($_);
@@ -406,7 +412,7 @@ sub visitOperation {
             print  $FH "\t\t\tmy \$_value = ";
                 print $FH $defn->{pl_package},"::",$defn->{pl_name};
                 print $FH "__demarshal(\$_reply,\$_offset,\$_endian);\n";
-            print $FH "\t\t\t\$self->{trace}(CORBA::USER_EXCEPTION,\" \$_exception_id.\\n\");\n";
+            print $FH "\t\t\t\$self->{trace}(CORBA::Perl::CORBA::USER_EXCEPTION,\" \$_exception_id.\\n\");\n";
             print $FH "\t\t\tthrow ",$defn->{pl_package},"::",$defn->{pl_name},"(\n";
             print $FH "\t\t\t\t\t_repos_id => \$_exception_id,\n";
             print $FH "\t\t\t\t\t\%{\$_value}\n";
@@ -417,12 +423,12 @@ sub visitOperation {
         print $FH "\t\t\twarn \"unknown user exception \$_exception_id.\\n\";\n";
         print $FH "\t\t}\n";
         print $FH "\t}\n";
-        print $FH "\telsif (\$_status eq CORBA::SYSTEM_EXCEPTION) {\n";
-        print $FH "\t\tmy \$_exception_id = CORBA::string__demarshal(\$_reply,\$_offset,\$_endian);\n";
-        print $FH "\t\tmy \$_minor_code_value = CORBA::unsigned_long__demarshal(\$_reply,\$_offset,\$_endian);\n";
-        print $FH "\t\tmy \$_completion_status = CORBA::completion_status__demarshal(\$_reply,\$_offset,\$_endian);\n";
-        print $FH "\t\t\$self->{trace}(CORBA::SYSTEM_EXCEPTION,\" \$_exception_id.\\n\");\n";
-        print $FH "\t\tthrow CORBA::SystemException(\n";
+        print $FH "\telsif (\$_status eq CORBA::Perl::CORBA::SYSTEM_EXCEPTION) {\n";
+        print $FH "\t\tmy \$_exception_id = CORBA::Perl::CORBA::string__demarshal(\$_reply,\$_offset,\$_endian);\n";
+        print $FH "\t\tmy \$_minor_code_value = CORBA::Perl::CORBA::unsigned_long__demarshal(\$_reply,\$_offset,\$_endian);\n";
+        print $FH "\t\tmy \$_completion_status = CORBA::Perl::CORBA::completion_status__demarshal(\$_reply,\$_offset,\$_endian);\n";
+        print $FH "\t\t\$self->{trace}(CORBA::Perl::CORBA::SYSTEM_EXCEPTION,\" \$_exception_id.\\n\");\n";
+        print $FH "\t\tthrow CORBA::Perl::CORBA::SystemException(\n";
         print $FH "\t\t\t\t_repos_id => \$_exception_id,\n";
         print $FH "\t\t\t\tminor     => \$_minor_code_value,\n";
         print $FH "\t\t\t\tcompleted => \$_completion_status\n";
@@ -468,24 +474,24 @@ sub visitOperation {
                 print $FH "\t\t",$type->{pl_package},"::",$type->{pl_name},"__marshal(\\\$reply_body, shift \@result);\n";
             }
         }
-        print $FH "\t\treturn (CORBA::NO_EXCEPTION, \$reply_body);\n";
+        print $FH "\t\treturn (CORBA::Perl::CORBA::NO_EXCEPTION, \$reply_body);\n";
         print $FH "\t}\n";
         foreach (@{$node->{list_raise}}) {
             my $defn = $self->_get_defn($_);
             print $FH "\tcatch ",$defn->{pl_package},"::",$defn->{pl_name}," with {\n";
-            print $FH "\t\tCORBA::string__marshal(\\\$reply_body,",$defn->{pl_package},"::",$defn->{pl_name},"__id());\n";
+            print $FH "\t\tCORBA::Perl::CORBA::string__marshal(\\\$reply_body,",$defn->{pl_package},"::",$defn->{pl_name},"__id());\n";
             if (exists $defn->{list_expr}) {
                 print $FH "\t\tmy \$E = shift;\n";
             }
-            print $FH "\t\treturn (CORBA::USER_EXCEPTION, \$reply_body);\n";
+            print $FH "\t\treturn (CORBA::Perl::CORBA::USER_EXCEPTION, \$reply_body);\n";
             print $FH "\t}\n";
         }
-        print $FH "\tcatch CORBA::Exception with {\n";
+        print $FH "\tcatch CORBA::Perl::CORBA::Exception with {\n";
         print $FH "\t\tmy \$E = shift;\n";
-        print $FH "\t\tCORBA::string__marshal(\\\$reply_body,\$E->{exception_id});\n";
-        print $FH "\t\tCORBA::unsigned_long__marshal(\\\$reply_body,\$E->{minor_code_value});\n";
-        print $FH "\t\tCORBA::completion_status__marshal(\\\$reply_body,\$E->{completion_status});\n";
-        print $FH "\t\treturn (CORBA::SYSTEM_EXCEPTION, \$reply_body);\n";
+        print $FH "\t\tCORBA::Perl::CORBA::string__marshal(\\\$reply_body,\$E->{exception_id});\n";
+        print $FH "\t\tCORBA::Perl::CORBA::unsigned_long__marshal(\\\$reply_body,\$E->{minor_code_value});\n";
+        print $FH "\t\tCORBA::Perl::CORBA::completion_status__marshal(\\\$reply_body,\$E->{completion_status});\n";
+        print $FH "\t\treturn (CORBA::Perl::CORBA::SYSTEM_EXCEPTION, \$reply_body);\n";
         print $FH "\t};\n";
     }
     print $FH "}\n";

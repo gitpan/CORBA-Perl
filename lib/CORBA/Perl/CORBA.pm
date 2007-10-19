@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package CORBA::Exception;
+package CORBA::Perl::CORBA::Exception;
 
 use Error;
 use base qw(Error);
@@ -19,9 +19,9 @@ sub stringify {
     return $str;
 }
 
-package CORBA::SystemException;
+package CORBA::Perl::CORBA::SystemException;
 
-use base qw(CORBA::Exception);
+use base qw(CORBA::Perl::CORBA::Exception);
 
 sub new {
     my $self = shift;
@@ -38,9 +38,9 @@ sub stringify {
     return $str;
 }
 
-package CORBA::UserException;
+package CORBA::Perl::CORBA::UserException;
 
-use base qw(CORBA::Exception);
+use base qw(CORBA::Perl::CORBA::Exception);
 
 sub new {
     my $self  = shift;
@@ -48,7 +48,7 @@ sub new {
     $self->SUPER::new(@_);
 }
 
-package CORBA;
+package CORBA::Perl::CORBA;
 
 use Carp;
 
@@ -404,20 +404,20 @@ sub string__stringify {
 sub exception_type__marshal {
     my ($r_buffer, $value) = @_;
     if    ($value eq 'NO_EXCEPTION') {
-        CORBA::unsigned_long__marshal($r_buffer, 0);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 0);
     }
     elsif ($value eq 'USER_EXCEPTION') {
-        CORBA::unsigned_long__marshal($r_buffer, 1);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 1);
     }
     elsif ($value eq 'SYSTEM_EXCEPTION') {
-        CORBA::unsigned_long__marshal($r_buffer, 2);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 2);
     }
     else {
         croak "bad value for 'CORBA::exception_type'.\n";
     }
 }
 sub exception_type__demarshal {
-    my $value = CORBA::unsigned_long__demarshal(@_);
+    my $value = CORBA::Perl::CORBA::unsigned_long__demarshal(@_);
     if    ($value == 0) {
         return 'NO_EXCEPTION';
     }
@@ -446,20 +446,20 @@ sub SYSTEM_EXCEPTION {
 sub completion_status__marshal {
     my ($r_buffer, $value) = @_;
     if    ($value eq 'COMPLETED_YES') {
-        CORBA::unsigned_long__marshal($r_buffer, 0);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 0);
     }
     elsif ($value eq 'COMPLETED_NO') {
-        CORBA::unsigned_long__marshal($r_buffer, 1);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 1);
     }
     elsif ($value eq 'COMPLETED_MAYBE') {
-        CORBA::unsigned_long__marshal($r_buffer, 2);
+        CORBA::Perl::CORBA::unsigned_long__marshal($r_buffer, 2);
     }
     else {
-        croak "bad value for 'CORBA::completion_status'.\n";
+        croak "bad value for 'CORBA::Perl::CORBA::completion_status'.\n";
     }
 }
 sub completion_status__demarshal {
-    my $value = CORBA::unsigned_long__demarshal(@_);
+    my $value = CORBA::Perl::CORBA::unsigned_long__demarshal(@_);
     if    ($value == 0) {
         return 'COMPLETED_YES';
     }
@@ -470,7 +470,7 @@ sub completion_status__demarshal {
         return 'COMPLETED_MAYBE';
     }
     else {
-        croak "bad value for 'CORBA::completion_status'.\n";
+        croak "bad value for 'CORBA::Perl::CORBA::completion_status'.\n";
     }
 }
 

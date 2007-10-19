@@ -9,7 +9,15 @@ lib/CORBA/Perl/ClientVisitor.pm
 lib/CORBA/Perl/LiteralVisitor.pm
 lib/CORBA/Perl/NameVisitor.pm
 lib/CORBA/Perl/CORBA.pm
+lib/CORBA/Perl/IOP.pm
+lib/CORBA/Perl/GIOP.pm
+lib/CORBA/Perl/MIOP.pm
+lib/CORBA/Perl/rpc_giop.pm
 bin/idl2pm
-bin/idl2pmcli
+bin/idl2pmrpc
+rpc1/calculator.idl
+rpc1/client.pl
+rpc1/server.pl
+rpc1/srv_calc.pm
 
 META.yml                                 Module meta-data (added by MakeMaker)

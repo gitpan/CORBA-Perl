@@ -54,9 +54,9 @@ if (defined $root) {
     if ($parser->YYData->{opt_x}) {
         $parser->Export();
     }
-    $root->visit(new CORBA::Perl::NameVisitor($parser));
+    $root->visit(new CORBA::Perl::NameVisitor($parser, $parser->YYData->{opt_J}));
     $root->visit(new CORBA::Perl::LiteralVisitor($parser));
-    $root->visit(new CORBA::Perl::CdrVisitor($parser));
+    $root->visit(new CORBA::Perl::CdrVisitor($parser, $parser->YYData->{opt_J}));
 }
 
 __END__
