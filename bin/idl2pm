@@ -143,14 +143,14 @@ cpp, idl2html, idl2xs_c
 
 =head1 COPYRIGHT
 
-(c) 2002-2007 Francois PERRAD, France. All rights reserved.
+(c) 2002-2008 FranE<ccedil>ois PERRAD, France. All rights reserved.
 
 This program and all CORBA::Perl modules are distributed
 under the terms of the Artistic Licence.
 
 =head1 AUTHOR
 
-Francois PERRAD, francois.perrad@gadz.org
+FranE<ccedil>ois PERRAD, francois.perrad@gadz.org
 
 =cut
 

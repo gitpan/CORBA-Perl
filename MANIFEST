@@ -19,5 +19,6 @@ rpc1/calculator.idl
 rpc1/client.pl
 rpc1/server.pl
 rpc1/srv_calc.pm
+t/pod.t
 
 META.yml                                 Module meta-data (added by MakeMaker)

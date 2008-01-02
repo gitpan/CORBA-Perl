@@ -8,7 +8,7 @@ package CORBA::Perl::CdrVisitor;
 use strict;
 use warnings;
 
-our $VERSION = '0.40';
+our $VERSION = '0.42';
 
 use File::Basename;
 use POSIX qw(ctime);
@@ -336,7 +336,7 @@ sub visitTypeDeclarator {
                 }
                 print $FH "sub ",$node->{idf},"__stringify {\n";
                 print $FH "\tmy (\$value, \$tab) = \@_;\n";
-                print $FH "\t\$tab = \"\" unless (defined \$tab);\n";
+                print $FH "\t\$tab = q{} unless (defined \$tab);\n";
                 print $FH "\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
                 print $FH "\t\t\tunless (defined \$value);\n";
                 $n = 0;
@@ -352,22 +352,22 @@ sub visitTypeDeclarator {
                     print $FH "\t\t\t\$first",$n," = 0;\n";
                     print $FH "\t\t}\n";
                     print $FH "\t\telse {\n";
-                    print $FH "\t\t\t\$str .= \",\";\n";
+                    print $FH "\t\t\t\$str .= ',';\n";
                     print $FH "\t\t}\n";
                     unless ($type2->isa('BasicType')) {
                         print $FH "\t\t\$str .= \"\\n\$tab  \";\n";
                     }
                 }
                 if (exists $type->{max}) {
-                    print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name},"__stringify(\$_, \$tab . \"  \", ",$type->{max}->{value},");\n";
+                    print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name},"__stringify(\$_, \$tab . q{ } x 2, ",$type->{max}->{value},");\n";
                 }
                 else {
-                    print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name},"__stringify(\$_, \$tab . \"  \");\n";
+                    print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name},"__stringify(\$_, \$tab . q{ } x 2);\n";
                 }
                 while ($n--) {
                     print $FH "\t}\n";
                     unless ($type2->isa('BasicType')) {
-                        print $FH "\t\t\$str .= \"\\n\$tab\";\n";
+                        print $FH "\t\$str .= \"\\n\$tab\";\n";
                     }
                     print $FH "\t\$str .= '}';\n";
                 }
@@ -447,46 +447,46 @@ sub visitStructType {
         my $FH = $self->{out};
         print $FH "# ",$name," (struct)\n";
         print $FH "sub ",$node->{pl_name},"__marshal {\n";
-        print $FH "\t\tmy (\$r_buffer, \$value) = \@_;\n";
-        print $FH "\t\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
-        print $FH "\t\t\t\tunless (defined \$value);\n";
-        print $FH "\t\tcroak \"invalid struct for '",$node->{idf},"' (not a HASH reference).\\n\"\n";
-        print $FH "\t\t\t\tunless (ref \$value eq 'HASH');\n";
+        print $FH "\tmy (\$r_buffer, \$value) = \@_;\n";
+        print $FH "\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
+        print $FH "\t\t\tunless (defined \$value);\n";
+        print $FH "\tcroak \"invalid struct for '",$node->{idf},"' (not a HASH reference).\\n\"\n";
+        print $FH "\t\t\tunless (ref \$value eq 'HASH');\n";
         foreach (@{$node->{list_member}}) {
             my $member = $self->_get_defn($_);          # member
-            print $FH "\t\tcroak \"no member '",$member->{idf},"' in structure '",$node->{idf},"'.\\n\"\n";
-            print $FH "\t\t\t\tunless (exists \$value->{",$member->{idf},"});\n";
+            print $FH "\tcroak \"no member '",$member->{idf},"' in structure '",$node->{idf},"'.\\n\"\n";
+            print $FH "\t\t\tunless (exists \$value->{",$member->{idf},"});\n";
         }
         foreach (@{$node->{list_member}}) {
             my $member = $self->_get_defn($_);          # member
-            $self->_member_marshal($member, "\$value->{" . $member->{idf} . "}");
+            $self->_member_marshal($member, $node, "\$value->{" . $member->{idf} . "}");
         }
         print $FH "}\n";
         print $FH "\n";
         print $FH "sub ",$node->{pl_name},"__demarshal {\n";
-        print $FH "\t\tmy (\$r_buffer, \$r_offset, \$endian) = \@_;\n";
-        print $FH "\t\tmy \$value = {};\n";
+        print $FH "\tmy (\$r_buffer, \$r_offset, \$endian) = \@_;\n";
+        print $FH "\tmy \$value = {};\n";
         foreach (@{$node->{list_member}}) {
             my $member = $self->_get_defn($_);          # member
-            $self->_member_demarshal($member, "\$value->{" . $member->{idf} . "}");
+            $self->_member_demarshal($member, $node, "\$value->{" . $member->{idf} . "}");
         }
-        print $FH "\t\treturn \$value;\n";
+        print $FH "\treturn \$value;\n";
         print $FH "}\n";
         print $FH "\n";
         if ($self->{stringify}) {
             print $FH "sub ",$node->{pl_name},"__stringify {\n";
-            print $FH "\t\tmy (\$value, \$tab) = \@_;\n";
-            print $FH "\t\t\$tab = \"\" unless defined (\$tab);\n";
-            print $FH "\t\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
-            print $FH "\t\t\t\tunless (defined \$value);\n";
-            print $FH "\t\tcroak \"invalid struct for '",$node->{idf},"' (not a HASH reference).\\n\"\n";
-            print $FH "\t\t\t\tunless (ref \$value eq 'HASH');\n";
+            print $FH "\tmy (\$value, \$tab) = \@_;\n";
+            print $FH "\t\$tab = q{} unless defined (\$tab);\n";
+            print $FH "\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
+            print $FH "\t\t\tunless (defined \$value);\n";
+            print $FH "\tcroak \"invalid struct for '",$node->{idf},"' (not a HASH reference).\\n\"\n";
+            print $FH "\t\t\tunless (ref \$value eq 'HASH');\n";
             foreach (@{$node->{list_member}}) {
                 my $member = $self->_get_defn($_);          # member
-                print $FH "\t\tcroak \"no member '",$member->{idf},"' in structure '",$node->{idf},"'.\\n\"\n";
-                print $FH "\t\t\t\tunless (exists \$value->{",$member->{idf},"});\n";
+                print $FH "\tcroak \"no member '",$member->{idf},"' in structure '",$node->{idf},"'.\\n\"\n";
+                print $FH "\t\t\tunless (exists \$value->{",$member->{idf},"});\n";
             }
-            print $FH "\t\tmy \$str = \"struct ",$node->{pl_name}," {\";\n";
+            print $FH "\tmy \$str = \"struct ",$node->{pl_name}," {\";\n";
             my $idx = 0;
             my $first = 1;
             foreach (@{$node->{list_member}}) {
@@ -495,18 +495,18 @@ sub visitStructType {
                     $first = 0;
                 }
                 else {
-                    print $FH "\t\t\$str .= \",\";\n";
+                    print $FH "\t\$str .= ',';\n";
                 }
-                $self->_member_stringify($member, "\$value->{" . $member->{idf} . "}", \$idx);
+                $self->_member_stringify($member, $node, "\$value->{" . $member->{idf} . "}", \$idx);
             }
-            print $FH "\t\t\$str .= \"\\n\$tab}\";\n";
-            print $FH "\t\treturn \$str;\n";
+            print $FH "\t\$str .= \"\\n\$tab}\";\n";
+            print $FH "\treturn \$str;\n";
             print $FH "}\n";
             print $FH "\n";
         }
         if ($self->{id}) {
             print $FH "sub ",$node->{pl_name},"__id () {\n";
-            print $FH "\t\treturn \"",$node->{repos_id},"\";\n";
+            print $FH "\treturn \"",$node->{repos_id},"\";\n";
             print $FH "}\n";
             print $FH "\n";
         }
@@ -515,37 +515,38 @@ sub visitStructType {
 
 sub _member_marshal {
     my $self = shift;
-    my ($node, $val) = @_;
+    my ($node, $parent, $val) = @_;
+    my $tab = $parent->isa('UnionType') ? "\t\t" : "\t";
     my $n = 0;
     my $type = $self->_get_defn($node->{type});
     my $FH = $self->{out};
     if (exists $node->{array_size}) {
-        print $FH "\t\tlocal \$_ = ",$val,";\n";
+        print $FH $tab,"local \$_ = ",$val,";\n";
         foreach (@{$node->{array_size}}) {
             $n ++;
-            print $FH "\t\tcroak \"bad size of array '",$node->{idf},"'.\\n\"\n";
-            print $FH "\t\t\t\tunless (scalar(\@{\$_}) == ",$_->{pl_literal},");\n";
-            print $FH "\t\tforeach (\@{\$_}) {\n";
+            print $FH $tab,"croak \"bad size of array '",$node->{idf},"'.\\n\"\n";
+            print $FH $tab,"\t\tunless (scalar(\@{\$_}) == ",$_->{pl_literal},");\n";
+            print $FH $tab,"foreach (\@{\$_}) {\n";
         }
         if (exists $type->{max}) {
-            print $FH "\t\t\t",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\t",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__marshal(\$r_buffer, \$_, ",$type->{max}->{value},");\n";
         }
         else {
-            print $FH "\t\t\t",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\t",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__marshal(\$r_buffer, \$_);\n";
         }
         while ($n--) {
-            print $FH "\t\t}\n";
+            print $FH $tab,"}\n";
         }
     }
     else {
         if (exists $type->{max}) {
-            print $FH "\t\t",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__marshal(\$r_buffer, ",$val,", ",$type->{max}->{value},");\n";
         }
         else {
-            print $FH "\t\t",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__marshal(\$r_buffer, ",$val,");\n";
         }
     }
@@ -553,38 +554,40 @@ sub _member_marshal {
 
 sub _member_demarshal {
     my $self = shift;
-    my ($node, $val) = @_;
+    my ($node, $parent, $val) = @_;
+    my $tab = $parent->isa('UnionType') ? "\t\t" : "\t";
     my $n = 0;
     my $FH = $self->{out};
     my $type = $self->_get_defn($node->{type});
     if (exists $node->{array_size}) {
         foreach (@{$node->{array_size}}) {
             $n ++;
-            print $FH "\t\tmy \@",$node->{idf},"_array",$n," = ();\n";
-            print $FH "\t\tfor (my \$idx",$n," = 0; ";
+            print $FH $tab,"my \@",$node->{idf},"_array",$n," = ();\n";
+            print $FH $tab,"for (my \$idx",$n," = 0; ";
                 print $FH "\$idx",$n," < ",$_->{pl_literal},"; ";
                 print $FH "\$idx",$n,"++) {\n";
         }
-        print $FH "\t\t\tpush \@",$node->{idf},"_array",$n,", ";
+        print $FH $tab,"\tpush \@",$node->{idf},"_array",$n,", ";
             print $FH $type->{pl_package},'::',$type->{pl_name},"__demarshal(\$r_buffer, \$r_offset, \$endian);\n";
-        print $FH "\t\t}\n";
+        print $FH $tab,"}\n";
         while ($n > 1) {
-            print $FH "\t\t\tpush \@",$node->{idf},"_array",($n - 1),", ";
+            print $FH $tab,"\tpush \@",$node->{idf},"_array",($n - 1),", ";
                 print $FH "\\\@",$node->{idf},"_array",$n,";\n";
-            print $FH "\t\t}\n";
+            print $FH $tab,"}\n";
             $n --;
         }
-        print $FH "\t\t",$val," = \\\@",$node->{idf},"_array1;\n";
+        print $FH $tab,$val," = \\\@",$node->{idf},"_array1;\n";
     }
     else {
-        print $FH "\t\t",$val," = ";
+        print $FH $tab,$val," = ";
             print $FH $type->{pl_package},'::',$type->{pl_name},"__demarshal(\$r_buffer, \$r_offset, \$endian);\n";
     }
 }
 
 sub _member_stringify {
     my $self = shift;
-    my ($node, $val, $r_idx) = @_;
+    my ($node, $parent, $val, $r_idx) = @_;
+    my $tab = $parent->isa('UnionType') ? "\t\t" : "\t";
     my $n = 0;
     my $type = $self->_get_defn($node->{type});
     my $array = q{};
@@ -594,55 +597,55 @@ sub _member_stringify {
         }
     }
     my $FH = $self->{out};
-    print $FH "\t\t\$str .= \"\\n\$tab  ",$type->{pl_name},$array," ",$node->{pl_name}," = \";\n";
+    print $FH $tab,"\$str .= \"\\n\$tab  ",$type->{pl_name},$array," ",$node->{pl_name}," = \";\n";
     if (exists $node->{array_size}) {
         my $type2 = $type;
         while (     $type2->isa('TypeDeclarator')
                 and ! exists $type2->{array_size} ) {
             $type2 = $self->_get_defn($type2->{type});
         }
-        print $FH "\t\tlocal \$_ = ",$val,";\n";
+        print $FH $tab,"local \$_ = ",$val,";\n";
         foreach (@{$node->{array_size}}) {
             $n ++;
             $$r_idx ++;
-            print $FH "\t\tcroak \"bad size of array '",$node->{idf},"'.\\n\"\n";
-            print $FH "\t\t\t\tunless (scalar(\@{\$_}) == ",$_->{pl_literal},");\n";
-            print $FH "\t\t\$str .= \"{\";\n";
-            print $FH "\t\tmy \$first",$$r_idx," = 1;\n";
-            print $FH "\t\tforeach (\@{\$_}) {\n";
-            print $FH "\t\t\tif (\$first",$$r_idx,") {\n";
-            print $FH "\t\t\t\t\$first",$$r_idx," = 0;\n";
-            print $FH "\t\t\t}\n";
-            print $FH "\t\t\telse {\n";
-            print $FH "\t\t\t\t\$str .= \",\";\n";
-            print $FH "\t\t\t}\n";
+            print $FH $tab,"croak \"bad size of array '",$node->{idf},"'.\\n\"\n";
+            print $FH $tab,"\t\tunless (scalar(\@{\$_}) == ",$_->{pl_literal},");\n";
+            print $FH $tab,"\$str .= \"{\";\n";
+            print $FH $tab,"my \$first",$$r_idx," = 1;\n";
+            print $FH $tab,"foreach (\@{\$_}) {\n";
+            print $FH $tab,"\tif (\$first",$$r_idx,") {\n";
+            print $FH $tab,"\t\t\$first",$$r_idx," = 0;\n";
+            print $FH $tab,"\t}\n";
+            print $FH $tab,"\telse {\n";
+            print $FH $tab,"\t\t\$str .= \",\";\n";
+            print $FH $tab,"\t}\n";
             unless ($type2->isa('BasicType')) {
-                print $FH "\t\t\$str .= \"\\n\";\n";
+                print $FH $tab,"\$str .= \"\\n\";\n";
             }
         }
         if (exists $type->{max}) {
-            print $FH "\t\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__stringify(\$_, \$tab . \"  \", ",$type->{max}->{value},");\n";
         }
         else {
-            print $FH "\t\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__stringify(\$_, \$tab . \"  \");\n";
         }
         while ($n--) {
-            print $FH "\t\t}\n";
+            print $FH $tab,"}\n";
             unless ($type2->isa('BasicType')) {
                 print $FH "\t\t\$str .= \"\\n\";\n";
             }
-            print $FH "\t\t\$str .= \"}\";\n";
+            print $FH $tab,"\$str .= \"}\";\n";
         }
     }
     else {
         if (exists $type->{max}) {
-            print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\$str .= ",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__stringify(",$val,", \$tab . \"  \", ",$type->{max}->{value},");\n";
         }
         else {
-            print $FH "\t\t\$str .= ",$type->{pl_package},'::',$type->{pl_name};
+            print $FH $tab,"\$str .= ",$type->{pl_package},'::',$type->{pl_name};
                 print $FH "__stringify(",$val,", \$tab . \"  \");\n";
         }
     }
@@ -707,7 +710,7 @@ sub visitUnionType {
                     print $FH "\t}\n";
                     print $FH "\telsif (\$d ",$equal," ",$_->{pl_literal},") {\n";
                     my $member = $self->_get_defn($case->{element}->{value});
-                    $self->_member_marshal($member, "\$value");
+                    $self->_member_marshal($member, $node, "\$value");
                 }
             }
         }
@@ -715,7 +718,7 @@ sub visitUnionType {
             print $FH "\t}\n";
             print $FH "\telse {\t# default\n";
             my $member = $self->_get_defn($default->{element}->{value});
-            $self->_member_marshal($member, "\$value");
+            $self->_member_marshal($member, $node, "\$value");
         }
         else {
             print $FH "\t}\n";
@@ -737,7 +740,7 @@ sub visitUnionType {
                     print $FH "\t}\n";
                     print $FH "\telsif (\$d ",$equal," ",$_->{pl_literal},") {\n";
                     my $member = $self->_get_defn($case->{element}->{value});
-                    $self->_member_demarshal($member, "\$value");
+                    $self->_member_demarshal($member, $node, "\$value");
                 }
             }
         }
@@ -745,7 +748,7 @@ sub visitUnionType {
             print $FH "\t}\n";
             print $FH "\telse {\t# default\n";
             my $member = $self->_get_defn($default->{element}->{value});
-            $self->_member_demarshal($member, "\$value");
+            $self->_member_demarshal($member, $node, "\$value");
         }
         else {
             print $FH "\t}\n";
@@ -759,7 +762,7 @@ sub visitUnionType {
         if ($self->{stringify}) {
             print $FH "sub ",$node->{pl_name},"__stringify {\n";
             print $FH "\tmy (\$union, \$tab) = \@_;\n";
-            print $FH "\t\$tab = \"\" unless defined (\$tab);\n";
+            print $FH "\t\$tab = q{} unless defined (\$tab);\n";
             print $FH "\tcroak \"undefined value for '",$node->{idf},"'.\\n\"\n";
             print $FH "\t\t\tunless (defined \$union);\n";
             print $FH "\tcroak \"invalid union for '",$node->{idf},"' (not a ARRAY reference).\\n\"\n";
@@ -778,7 +781,7 @@ sub visitUnionType {
                         print $FH "\t}\n";
                         print $FH "\telsif (\$d ",$equal," ",$_->{pl_literal},") {\n";
                         my $member = $self->_get_defn($case->{element}->{value});
-                        $self->_member_stringify($member, "\$value", \$idx);
+                        $self->_member_stringify($member, $node, "\$value", \$idx);
                     }
                 }
             }
@@ -786,7 +789,7 @@ sub visitUnionType {
                 print $FH "\t}\n";
                 print $FH "\telse {\t# default\n";
                 my $member = $self->_get_defn($default->{element}->{value});
-                $self->_member_stringify($member, "\$value", \$idx);
+                $self->_member_stringify($member, $node, "\$value", \$idx);
             }
             else {
                 print $FH "\t}\n";
@@ -952,7 +955,7 @@ sub visitSequenceType {
             }
             print $FH "sub ",$node->{pl_name},"__stringify {\n";
             print $FH "\tmy (\$value, \$tab, \$max) = \@_;\n";
-            print $FH "\t\$tab = \"\" unless (defined \$tab);\n";
+            print $FH "\t\$tab = q{} unless (defined \$tab);\n";
             print $FH "\tcroak \"undefined value for '",$node->{pl_name},"'.\\n\"\n";
             print $FH "\t\t\tunless (defined \$value);\n";
             if ($type->{pl_name} eq 'char') {
@@ -977,15 +980,15 @@ sub visitSequenceType {
                 print $FH "\t\t\t\$first = 0;\n";
                 print $FH "\t\t}\n";
                 print $FH "\t\telse {\n";
-                print $FH "\t\t\t\$str .= \",\";\n";
+                print $FH "\t\t\t\$str .= ',';\n";
                 print $FH "\t\t}\n";
                 unless ($type2->isa('BasicType')) {
                     print $FH "\t\t\$str .= \"\\n\$tab  \";\n";
                 }
-                print $FH "\t\t\$str .= ",$type->{pl_package},"::",$type->{pl_name},"__stringify(\$_, \$tab . \"  \");\n";
+                print $FH "\t\t\$str .= ",$type->{pl_package},"::",$type->{pl_name},"__stringify(\$_, \$tab . q{ } x 2);\n";
                 print $FH "\t}\n";
                 unless ($type2->isa('BasicType')) {
-                    print $FH "\t\t\$str .= \"\\n\$tab\";\n";
+                    print $FH "\t\$str .= \"\\n\$tab\";\n";
                 }
                 print $FH "\t\$str .= '}';\n";
                 print $FH "\treturn \$str;\n";
@@ -1042,7 +1045,7 @@ sub visitException {
         }
         foreach (@{$node->{list_member}}) {
             my $member = $self->_get_defn($_);          # member
-            $self->_member_marshal($member, "\$value->{" . $member->{idf} . "}");
+            $self->_member_marshal($member, $node, "\$value->{" . $member->{idf} . "}");
         }
         print $FH "}\n";
         print $FH "\n";
@@ -1051,14 +1054,14 @@ sub visitException {
         print $FH "\t\tmy \$value = {};\n";
         foreach (@{$node->{list_member}}) {
             my $member = $self->_get_defn($_);          # member
-            $self->_member_demarshal($member, "\$value->{" . $member->{idf} . "}");
+            $self->_member_demarshal($member, $node, "\$value->{" . $member->{idf} . "}");
         }
         print $FH "\t\treturn \$value;\n";
         print $FH "}\n";
         print $FH "\n";
         if ($self->{id}) {
             print $FH "sub ",$node->{pl_name},"__id () {\n";
-            print $FH "\t\treturn \"",$node->{repos_id},"\";\n";
+            print $FH "\treturn \"",$node->{repos_id},"\";\n";
             print $FH "}\n";
             print $FH "\n";
         }

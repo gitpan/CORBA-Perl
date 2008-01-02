@@ -1,5 +1,9 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.42  Wed Jan  2 18:30:00 2008
+	- some Perl Best Practices
+	- add a t/pod.t
+
 0.41  Fri Oct 19 08:30:00 2007
 	- compatible with CORBA::IDL 2.61
 	- package refactoring (avoid PAUSE indexer errors)

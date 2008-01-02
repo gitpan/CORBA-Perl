@@ -1,4 +1,4 @@
-#   This file was generated (by C:\Perl\bin/idl2pm). DO NOT modify it.
+#   This file was generated (by D:\Perl\site\bin/idl2pm). DO NOT modify it.
 # From file : IOP.idl, 5190 octets, Fri Oct 05 18:47:18 2007
 
 use strict;
@@ -82,7 +82,7 @@ sub sequence_CORBA_Perl_CORBA_octet__demarshal {
 
 sub sequence_CORBA_Perl_CORBA_octet__stringify {
 	my ($value, $tab, $max) = @_;
-	$tab = "" unless (defined $tab);
+	$tab = q{} unless (defined $tab);
 	croak "undefined value for 'sequence_CORBA_Perl_CORBA_octet'.\n"
 			unless (defined $value);
 	$value = [map ord, split //, $value];
@@ -96,9 +96,9 @@ sub sequence_CORBA_Perl_CORBA_octet__stringify {
 			$first = 0;
 		}
 		else {
-			$str .= ",";
+			$str .= ',';
 		}
-		$str .= CORBA::Perl::CORBA::octet__stringify($_, $tab . "  ");
+		$str .= CORBA::Perl::CORBA::octet__stringify($_, $tab . q{ } x 2);
 	}
 	$str .= '}';
 	return $str;
@@ -106,50 +106,50 @@ sub sequence_CORBA_Perl_CORBA_octet__stringify {
 
 # CORBA::Perl::IOP::TaggedProfile (struct)
 sub TaggedProfile__marshal {
-		my ($r_buffer, $value) = @_;
-		croak "undefined value for 'TaggedProfile'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'TaggedProfile' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'tag' in structure 'TaggedProfile'.\n"
-				unless (exists $value->{tag});
-		croak "no member 'profile_data' in structure 'TaggedProfile'.\n"
-				unless (exists $value->{profile_data});
-		CORBA::Perl::IOP::ProfileId__marshal($r_buffer, $value->{tag});
-		CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{profile_data});
+	my ($r_buffer, $value) = @_;
+	croak "undefined value for 'TaggedProfile'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'TaggedProfile' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'tag' in structure 'TaggedProfile'.\n"
+			unless (exists $value->{tag});
+	croak "no member 'profile_data' in structure 'TaggedProfile'.\n"
+			unless (exists $value->{profile_data});
+	CORBA::Perl::IOP::ProfileId__marshal($r_buffer, $value->{tag});
+	CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{profile_data});
 }
 
 sub TaggedProfile__demarshal {
-		my ($r_buffer, $r_offset, $endian) = @_;
-		my $value = {};
-		$value->{tag} = CORBA::Perl::IOP::ProfileId__demarshal($r_buffer, $r_offset, $endian);
-		$value->{profile_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
-		return $value;
+	my ($r_buffer, $r_offset, $endian) = @_;
+	my $value = {};
+	$value->{tag} = CORBA::Perl::IOP::ProfileId__demarshal($r_buffer, $r_offset, $endian);
+	$value->{profile_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
+	return $value;
 }
 
 sub TaggedProfile__stringify {
-		my ($value, $tab) = @_;
-		$tab = "" unless defined ($tab);
-		croak "undefined value for 'TaggedProfile'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'TaggedProfile' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'tag' in structure 'TaggedProfile'.\n"
-				unless (exists $value->{tag});
-		croak "no member 'profile_data' in structure 'TaggedProfile'.\n"
-				unless (exists $value->{profile_data});
-		my $str = "struct TaggedProfile {";
-		$str .= "\n$tab  ProfileId tag = ";
-		$str .= CORBA::Perl::IOP::ProfileId__stringify($value->{tag}, $tab . "  ");
-		$str .= ",";
-		$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet profile_data = ";
-		$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{profile_data}, $tab . "  ");
-		$str .= "\n$tab}";
-		return $str;
+	my ($value, $tab) = @_;
+	$tab = q{} unless defined ($tab);
+	croak "undefined value for 'TaggedProfile'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'TaggedProfile' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'tag' in structure 'TaggedProfile'.\n"
+			unless (exists $value->{tag});
+	croak "no member 'profile_data' in structure 'TaggedProfile'.\n"
+			unless (exists $value->{profile_data});
+	my $str = "struct TaggedProfile {";
+	$str .= "\n$tab  ProfileId tag = ";
+	$str .= CORBA::Perl::IOP::ProfileId__stringify($value->{tag}, $tab . "  ");
+	$str .= ',';
+	$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet profile_data = ";
+	$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{profile_data}, $tab . "  ");
+	$str .= "\n$tab}";
+	return $str;
 }
 
 sub TaggedProfile__id () {
-		return "IDL:omg.org/IOP/TaggedProfile:1.0";
+	return "IDL:omg.org/IOP/TaggedProfile:1.0";
 }
 
 # CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile (sequence)
@@ -178,7 +178,7 @@ sub sequence_CORBA_Perl_IOP_TaggedProfile__demarshal {
 
 sub sequence_CORBA_Perl_IOP_TaggedProfile__stringify {
 	my ($value, $tab, $max) = @_;
-	$tab = "" unless (defined $tab);
+	$tab = q{} unless (defined $tab);
 	croak "undefined value for 'sequence_CORBA_Perl_IOP_TaggedProfile'.\n"
 			unless (defined $value);
 	my $len = scalar(@{$value});
@@ -191,62 +191,62 @@ sub sequence_CORBA_Perl_IOP_TaggedProfile__stringify {
 			$first = 0;
 		}
 		else {
-			$str .= ",";
+			$str .= ',';
 		}
 		$str .= "\n$tab  ";
-		$str .= CORBA::Perl::IOP::TaggedProfile__stringify($_, $tab . "  ");
+		$str .= CORBA::Perl::IOP::TaggedProfile__stringify($_, $tab . q{ } x 2);
 	}
-		$str .= "\n$tab";
+	$str .= "\n$tab";
 	$str .= '}';
 	return $str;
 }
 
 # CORBA::Perl::IOP::IOR (struct)
 sub IOR__marshal {
-		my ($r_buffer, $value) = @_;
-		croak "undefined value for 'IOR'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'IOR' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'type_id' in structure 'IOR'.\n"
-				unless (exists $value->{type_id});
-		croak "no member 'profiles' in structure 'IOR'.\n"
-				unless (exists $value->{profiles});
-		CORBA::Perl::CORBA::string__marshal($r_buffer, $value->{type_id});
-		CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__marshal($r_buffer, $value->{profiles});
+	my ($r_buffer, $value) = @_;
+	croak "undefined value for 'IOR'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'IOR' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'type_id' in structure 'IOR'.\n"
+			unless (exists $value->{type_id});
+	croak "no member 'profiles' in structure 'IOR'.\n"
+			unless (exists $value->{profiles});
+	CORBA::Perl::CORBA::string__marshal($r_buffer, $value->{type_id});
+	CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__marshal($r_buffer, $value->{profiles});
 }
 
 sub IOR__demarshal {
-		my ($r_buffer, $r_offset, $endian) = @_;
-		my $value = {};
-		$value->{type_id} = CORBA::Perl::CORBA::string__demarshal($r_buffer, $r_offset, $endian);
-		$value->{profiles} = CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__demarshal($r_buffer, $r_offset, $endian);
-		return $value;
+	my ($r_buffer, $r_offset, $endian) = @_;
+	my $value = {};
+	$value->{type_id} = CORBA::Perl::CORBA::string__demarshal($r_buffer, $r_offset, $endian);
+	$value->{profiles} = CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__demarshal($r_buffer, $r_offset, $endian);
+	return $value;
 }
 
 sub IOR__stringify {
-		my ($value, $tab) = @_;
-		$tab = "" unless defined ($tab);
-		croak "undefined value for 'IOR'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'IOR' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'type_id' in structure 'IOR'.\n"
-				unless (exists $value->{type_id});
-		croak "no member 'profiles' in structure 'IOR'.\n"
-				unless (exists $value->{profiles});
-		my $str = "struct IOR {";
-		$str .= "\n$tab  string type_id = ";
-		$str .= CORBA::Perl::CORBA::string__stringify($value->{type_id}, $tab . "  ");
-		$str .= ",";
-		$str .= "\n$tab  sequence_CORBA_Perl_IOP_TaggedProfile profiles = ";
-		$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__stringify($value->{profiles}, $tab . "  ");
-		$str .= "\n$tab}";
-		return $str;
+	my ($value, $tab) = @_;
+	$tab = q{} unless defined ($tab);
+	croak "undefined value for 'IOR'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'IOR' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'type_id' in structure 'IOR'.\n"
+			unless (exists $value->{type_id});
+	croak "no member 'profiles' in structure 'IOR'.\n"
+			unless (exists $value->{profiles});
+	my $str = "struct IOR {";
+	$str .= "\n$tab  string type_id = ";
+	$str .= CORBA::Perl::CORBA::string__stringify($value->{type_id}, $tab . "  ");
+	$str .= ',';
+	$str .= "\n$tab  sequence_CORBA_Perl_IOP_TaggedProfile profiles = ";
+	$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedProfile__stringify($value->{profiles}, $tab . "  ");
+	$str .= "\n$tab}";
+	return $str;
 }
 
 sub IOR__id () {
-		return "IDL:omg.org/IOP/IOR:1.0";
+	return "IDL:omg.org/IOP/IOR:1.0";
 }
 
 # CORBA::Perl::IOP::ComponentId (typedef)
@@ -275,50 +275,50 @@ sub ComponentId__id () {
 
 # CORBA::Perl::IOP::TaggedComponent (struct)
 sub TaggedComponent__marshal {
-		my ($r_buffer, $value) = @_;
-		croak "undefined value for 'TaggedComponent'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'TaggedComponent' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'tag' in structure 'TaggedComponent'.\n"
-				unless (exists $value->{tag});
-		croak "no member 'component_data' in structure 'TaggedComponent'.\n"
-				unless (exists $value->{component_data});
-		CORBA::Perl::IOP::ComponentId__marshal($r_buffer, $value->{tag});
-		CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{component_data});
+	my ($r_buffer, $value) = @_;
+	croak "undefined value for 'TaggedComponent'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'TaggedComponent' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'tag' in structure 'TaggedComponent'.\n"
+			unless (exists $value->{tag});
+	croak "no member 'component_data' in structure 'TaggedComponent'.\n"
+			unless (exists $value->{component_data});
+	CORBA::Perl::IOP::ComponentId__marshal($r_buffer, $value->{tag});
+	CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{component_data});
 }
 
 sub TaggedComponent__demarshal {
-		my ($r_buffer, $r_offset, $endian) = @_;
-		my $value = {};
-		$value->{tag} = CORBA::Perl::IOP::ComponentId__demarshal($r_buffer, $r_offset, $endian);
-		$value->{component_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
-		return $value;
+	my ($r_buffer, $r_offset, $endian) = @_;
+	my $value = {};
+	$value->{tag} = CORBA::Perl::IOP::ComponentId__demarshal($r_buffer, $r_offset, $endian);
+	$value->{component_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
+	return $value;
 }
 
 sub TaggedComponent__stringify {
-		my ($value, $tab) = @_;
-		$tab = "" unless defined ($tab);
-		croak "undefined value for 'TaggedComponent'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'TaggedComponent' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'tag' in structure 'TaggedComponent'.\n"
-				unless (exists $value->{tag});
-		croak "no member 'component_data' in structure 'TaggedComponent'.\n"
-				unless (exists $value->{component_data});
-		my $str = "struct TaggedComponent {";
-		$str .= "\n$tab  ComponentId tag = ";
-		$str .= CORBA::Perl::IOP::ComponentId__stringify($value->{tag}, $tab . "  ");
-		$str .= ",";
-		$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet component_data = ";
-		$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{component_data}, $tab . "  ");
-		$str .= "\n$tab}";
-		return $str;
+	my ($value, $tab) = @_;
+	$tab = q{} unless defined ($tab);
+	croak "undefined value for 'TaggedComponent'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'TaggedComponent' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'tag' in structure 'TaggedComponent'.\n"
+			unless (exists $value->{tag});
+	croak "no member 'component_data' in structure 'TaggedComponent'.\n"
+			unless (exists $value->{component_data});
+	my $str = "struct TaggedComponent {";
+	$str .= "\n$tab  ComponentId tag = ";
+	$str .= CORBA::Perl::IOP::ComponentId__stringify($value->{tag}, $tab . "  ");
+	$str .= ',';
+	$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet component_data = ";
+	$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{component_data}, $tab . "  ");
+	$str .= "\n$tab}";
+	return $str;
 }
 
 sub TaggedComponent__id () {
-		return "IDL:omg.org/IOP/TaggedComponent:1.0";
+	return "IDL:omg.org/IOP/TaggedComponent:1.0";
 }
 
 # CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_TaggedComponent (sequence)
@@ -347,7 +347,7 @@ sub sequence_CORBA_Perl_IOP_TaggedComponent__demarshal {
 
 sub sequence_CORBA_Perl_IOP_TaggedComponent__stringify {
 	my ($value, $tab, $max) = @_;
-	$tab = "" unless (defined $tab);
+	$tab = q{} unless (defined $tab);
 	croak "undefined value for 'sequence_CORBA_Perl_IOP_TaggedComponent'.\n"
 			unless (defined $value);
 	my $len = scalar(@{$value});
@@ -360,12 +360,12 @@ sub sequence_CORBA_Perl_IOP_TaggedComponent__stringify {
 			$first = 0;
 		}
 		else {
-			$str .= ",";
+			$str .= ',';
 		}
 		$str .= "\n$tab  ";
-		$str .= CORBA::Perl::IOP::TaggedComponent__stringify($_, $tab . "  ");
+		$str .= CORBA::Perl::IOP::TaggedComponent__stringify($_, $tab . q{ } x 2);
 	}
-		$str .= "\n$tab";
+	$str .= "\n$tab";
 	$str .= '}';
 	return $str;
 }
@@ -590,50 +590,50 @@ sub ServiceId__id () {
 
 # CORBA::Perl::IOP::ServiceContext (struct)
 sub ServiceContext__marshal {
-		my ($r_buffer, $value) = @_;
-		croak "undefined value for 'ServiceContext'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'ServiceContext' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'context_id' in structure 'ServiceContext'.\n"
-				unless (exists $value->{context_id});
-		croak "no member 'context_data' in structure 'ServiceContext'.\n"
-				unless (exists $value->{context_data});
-		CORBA::Perl::IOP::ServiceId__marshal($r_buffer, $value->{context_id});
-		CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{context_data});
+	my ($r_buffer, $value) = @_;
+	croak "undefined value for 'ServiceContext'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'ServiceContext' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'context_id' in structure 'ServiceContext'.\n"
+			unless (exists $value->{context_id});
+	croak "no member 'context_data' in structure 'ServiceContext'.\n"
+			unless (exists $value->{context_data});
+	CORBA::Perl::IOP::ServiceId__marshal($r_buffer, $value->{context_id});
+	CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__marshal($r_buffer, $value->{context_data});
 }
 
 sub ServiceContext__demarshal {
-		my ($r_buffer, $r_offset, $endian) = @_;
-		my $value = {};
-		$value->{context_id} = CORBA::Perl::IOP::ServiceId__demarshal($r_buffer, $r_offset, $endian);
-		$value->{context_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
-		return $value;
+	my ($r_buffer, $r_offset, $endian) = @_;
+	my $value = {};
+	$value->{context_id} = CORBA::Perl::IOP::ServiceId__demarshal($r_buffer, $r_offset, $endian);
+	$value->{context_data} = CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__demarshal($r_buffer, $r_offset, $endian);
+	return $value;
 }
 
 sub ServiceContext__stringify {
-		my ($value, $tab) = @_;
-		$tab = "" unless defined ($tab);
-		croak "undefined value for 'ServiceContext'.\n"
-				unless (defined $value);
-		croak "invalid struct for 'ServiceContext' (not a HASH reference).\n"
-				unless (ref $value eq 'HASH');
-		croak "no member 'context_id' in structure 'ServiceContext'.\n"
-				unless (exists $value->{context_id});
-		croak "no member 'context_data' in structure 'ServiceContext'.\n"
-				unless (exists $value->{context_data});
-		my $str = "struct ServiceContext {";
-		$str .= "\n$tab  ServiceId context_id = ";
-		$str .= CORBA::Perl::IOP::ServiceId__stringify($value->{context_id}, $tab . "  ");
-		$str .= ",";
-		$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet context_data = ";
-		$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{context_data}, $tab . "  ");
-		$str .= "\n$tab}";
-		return $str;
+	my ($value, $tab) = @_;
+	$tab = q{} unless defined ($tab);
+	croak "undefined value for 'ServiceContext'.\n"
+			unless (defined $value);
+	croak "invalid struct for 'ServiceContext' (not a HASH reference).\n"
+			unless (ref $value eq 'HASH');
+	croak "no member 'context_id' in structure 'ServiceContext'.\n"
+			unless (exists $value->{context_id});
+	croak "no member 'context_data' in structure 'ServiceContext'.\n"
+			unless (exists $value->{context_data});
+	my $str = "struct ServiceContext {";
+	$str .= "\n$tab  ServiceId context_id = ";
+	$str .= CORBA::Perl::IOP::ServiceId__stringify($value->{context_id}, $tab . "  ");
+	$str .= ',';
+	$str .= "\n$tab  sequence_CORBA_Perl_CORBA_octet context_data = ";
+	$str .= CORBA::Perl::IOP::sequence_CORBA_Perl_CORBA_octet__stringify($value->{context_data}, $tab . "  ");
+	$str .= "\n$tab}";
+	return $str;
 }
 
 sub ServiceContext__id () {
-		return "IDL:omg.org/IOP/ServiceContext:1.0";
+	return "IDL:omg.org/IOP/ServiceContext:1.0";
 }
 
 # CORBA::Perl::IOP::sequence_CORBA_Perl_IOP_ServiceContext (sequence)
@@ -662,7 +662,7 @@ sub sequence_CORBA_Perl_IOP_ServiceContext__demarshal {
 
 sub sequence_CORBA_Perl_IOP_ServiceContext__stringify {
 	my ($value, $tab, $max) = @_;
-	$tab = "" unless (defined $tab);
+	$tab = q{} unless (defined $tab);
 	croak "undefined value for 'sequence_CORBA_Perl_IOP_ServiceContext'.\n"
 			unless (defined $value);
 	my $len = scalar(@{$value});
@@ -675,12 +675,12 @@ sub sequence_CORBA_Perl_IOP_ServiceContext__stringify {
 			$first = 0;
 		}
 		else {
-			$str .= ",";
+			$str .= ',';
 		}
 		$str .= "\n$tab  ";
-		$str .= CORBA::Perl::IOP::ServiceContext__stringify($_, $tab . "  ");
+		$str .= CORBA::Perl::IOP::ServiceContext__stringify($_, $tab . q{ } x 2);
 	}
-		$str .= "\n$tab";
+	$str .= "\n$tab";
 	$str .= '}';
 	return $str;
 }
