@@ -1,5 +1,8 @@
 Revision history for Perl extension CORBA::Perl.
 
+0.43  Wed Jul 16 18:30:00 2008
+	- add Vi & Emacs macros
+
 0.42  Wed Jan  2 18:30:00 2008
 	- some Perl Best Practices
 	- add a t/pod.t

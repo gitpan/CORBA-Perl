@@ -1,5 +1,6 @@
+# ex: set ro:
 #   This file was generated (by D:\Perl\site\bin/idl2pm). DO NOT modify it.
-# From file : MIOP.idl, 1424 octets, Fri Oct 05 18:47:18 2007
+# From file : MIOP.idl, 1424 octets, Fri Oct 05 19:47:18 2007
 
 use strict;
 use warnings;
@@ -382,3 +383,7 @@ package main;
 1;
 
 #   end of file : MIOP.pm
+
+# Local variables:
+#   buffer-read-only: t
+# End:
